@@ -75,12 +75,13 @@ demo originalView model =
                 [ Html.text string ]
     in
     layout
-        [ sectionTitle "Interactive"
+        [ sectionTitle "view : Model -> Html Msg"
         , HtmlData.Extra.toElmHtml renderedNode
-        , sectionTitle "text/html"
+        , sectionTitle "view -> String (text/html)"
         , sectionCode
             (HtmlData.Extra.texthtmlFromHtml HtmlData.Extra.defaultSanitizeConfig renderedNode)
-        , sectionTitle "text/plain"
+        , sectionTitle "view -> String (text/plain)"
         , sectionCode
             (HtmlData.Extra.textplainFromHtml HtmlData.Extra.defaultTextPlainConfig renderedNode)
+        , Html.a [ Html.Attributes.href "https://github.com/choonkeat/explore-html-data-extra" ] [ Html.text "github.com/choonkeat/explore-html-data-extra" ]
         ]
