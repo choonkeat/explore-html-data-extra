@@ -20,6 +20,7 @@ if this makes swapping out import against existing code more possible
 type Html msg
     = Text String
     | Element String (List (Attribute msg)) (List (Html msg))
+    | KeyedElement String (List (Attribute msg)) (List ( String, Html msg ))
 
 
 {-| see documentation in elm/html
@@ -46,6 +47,9 @@ map f htmlnode =
 
         Element string attrs children ->
             Element string (List.map (HtmlData.Attributes.map f) attrs) (List.map (map f) children)
+
+        KeyedElement string attrs children ->
+            KeyedElement string (List.map (HtmlData.Attributes.map f) attrs) (List.map (Tuple.mapSecond (map f)) children)
 
 
 {-| see documentation in elm/html

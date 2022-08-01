@@ -6,6 +6,7 @@ import Html.Attributes
 import HtmlData exposing (..)
 import HtmlData.Events exposing (..)
 import HtmlData.Extra
+import HtmlData.Keyed
 
 
 main : Program () Int Msg
@@ -38,7 +39,19 @@ view model =
         [ button [ onClick Decrement ] [ text "-" ]
         , div [] [ text (String.fromInt model) ]
         , button [ onClick Increment ] [ text "+" ]
+        , viewList (List.sort (List.map ((+) 1 >> String.fromInt) (List.range 0 model)))
         ]
+
+
+viewList : List String -> Html msg
+viewList numbers =
+    HtmlData.Keyed.ul []
+        (List.map (\s -> ( s, viewNumber s )) numbers)
+
+
+viewNumber : String -> Html msg
+viewNumber string =
+    li [] [ text ("Item " ++ string) ]
 
 
 
