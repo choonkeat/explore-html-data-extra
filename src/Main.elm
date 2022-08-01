@@ -79,9 +79,9 @@ demo originalView model =
         , HtmlData.Extra.toElmHtml renderedNode
         , sectionTitle "view -> String (text/html)"
         , sectionCode
-            (HtmlData.Extra.texthtmlFromHtml HtmlData.Extra.defaultSanitizeConfig renderedNode)
+            (HtmlData.Extra.toTextHtml HtmlData.Extra.defaultSanitizeConfig renderedNode)
         , sectionTitle "view -> String (text/plain)"
         , sectionCode
-            (HtmlData.Extra.textplainFromHtml HtmlData.Extra.defaultTextPlainConfig renderedNode)
+            (HtmlData.Extra.toTextPlain HtmlData.Extra.defaultTextPlainConfig renderedNode)
         , Html.a [ Html.Attributes.href "https://github.com/choonkeat/explore-html-data-extra" ] [ Html.text "github.com/choonkeat/explore-html-data-extra" ]
         ]
