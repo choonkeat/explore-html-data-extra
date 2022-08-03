@@ -695,7 +695,7 @@ attrsToElmHtml attrList =
         (\attr acc ->
             case attr of
                 Attribute key string ->
-                    VirtualDom.attribute key (Json.Encode.encode 0 (Json.Encode.string string)) :: acc
+                    VirtualDom.attribute key string :: acc
 
                 NoAttribute ->
                     acc

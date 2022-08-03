@@ -1,1 +1,1 @@
-Exploring [choonkeat/html-data](https://package.elm-lang.org/packages/choonkeat/html-data/latest/) and [choonkeat/html-data-extra](https://package.elm-lang.org/packages/choonkeat/html-data-extra/latest/)
+Exploration and demo of (likely unreleased versions of) [choonkeat/html-data](https://package.elm-lang.org/packages/choonkeat/html-data/latest/) and [choonkeat/html-data-extra](https://package.elm-lang.org/packages/choonkeat/html-data-extra/latest/).

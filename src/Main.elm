@@ -1,9 +1,9 @@
 module Main exposing (..)
 
 import Browser
-import Html
-import Html.Attributes
+import Homepage
 import HtmlData exposing (..)
+import HtmlData.Attributes exposing (..)
 import HtmlData.Events exposing (..)
 import HtmlData.Extra
 import HtmlData.Keyed
@@ -14,7 +14,7 @@ main =
     Browser.sandbox
         { init = 0
         , update = update
-        , view = demo view -- wrap `view` with demo; view is standard from <https://guide.elm-lang.org>
+        , view = Homepage.demo view -- wrap `view` with demo; view is standard from <https://guide.elm-lang.org>
         }
 
 
@@ -35,66 +35,62 @@ update msg model =
 
 view : Int -> Html Msg
 view model =
-    div []
+    let
+        sortedStrings =
+            List.range 0 model
+                -- so 0 to 0 is an empty list
+                |> List.drop 1
+                -- so we have opportunities to insert stuff between stuff
+                |> List.map String.fromInt
+                |> List.sort
+    in
+    div [ name "hello\">" ]
         [ button [ onClick Decrement ] [ text "-" ]
         , div [] [ text (String.fromInt model) ]
         , button [ onClick Increment ] [ text "+" ]
-        , viewList (List.sort (List.map ((+) 1 >> String.fromInt) (List.range 0 model)))
+        , yourview model
+        , viewList sortedStrings
+        , p []
+            [ text "New node is yellow, old nodes fade, to show off "
+            , code [] [ text "HtmlData.Keyed" ]
+            , text " working properly. Try adding more than 10 items!"
+            ]
         ]
 
 
 viewList : List String -> Html msg
-viewList numbers =
-    HtmlData.Keyed.ul []
-        (List.map (\s -> ( s, viewNumber s )) numbers)
+viewList sortedStrings =
+    let
+        totalCount =
+            List.length sortedStrings
+    in
+    HtmlData.Keyed.ol []
+        (List.map (\s -> ( s, viewNumber totalCount s )) sortedStrings)
 
 
-viewNumber : String -> Html msg
-viewNumber string =
-    li [] [ text ("Item " ++ string) ]
+viewNumber : Int -> String -> Html msg
+viewNumber totalCount string =
+    let
+        cssName =
+            if String.fromInt totalCount == string then
+                "current"
+
+            else
+                "past"
+    in
+    li [ class cssName ] [ text ("Item " ++ string) ]
 
 
 
 --
 
 
-{-| This is a demo function to render the same `Html msg` node
-as interactive, as a html String, and as plain text String
+yourview : Int -> Html msg
+yourview num =
+    div []
+        [ if modBy 2 num == 0 then
+            strong [] [ text "Get even" ]
 
-Note we're using Html and Html.Attributes here
-
--}
-demo : (Int -> Html Msg) -> Int -> Html.Html Msg
-demo originalView model =
-    let
-        renderedNode =
-            originalView model
-
-        layout =
-            Html.div
-                [ Html.Attributes.style "max-width" "300px"
-                , Html.Attributes.style "margin" "1em auto 1em auto"
-                ]
-
-        sectionTitle s =
-            Html.p [] [ Html.text s ]
-
-        sectionCode string =
-            Html.pre
-                [ Html.Attributes.style "white-space" "pre-wrap"
-                , Html.Attributes.style "background-color" "lightGray"
-                , Html.Attributes.style "padding" "1em"
-                ]
-                [ Html.text string ]
-    in
-    layout
-        [ sectionTitle "view : Model -> Html Msg"
-        , HtmlData.Extra.toElmHtml renderedNode
-        , sectionTitle "view -> String (text/html)"
-        , sectionCode
-            (HtmlData.Extra.toTextHtml HtmlData.Extra.defaultSanitizeConfig renderedNode)
-        , sectionTitle "view -> String (text/plain)"
-        , sectionCode
-            (HtmlData.Extra.toTextPlain HtmlData.Extra.defaultTextPlainConfig renderedNode)
-        , Html.a [ Html.Attributes.href "https://github.com/choonkeat/explore-html-data-extra" ] [ Html.text "github.com/choonkeat/explore-html-data-extra" ]
+          else
+            em [] [ text "That's odd" ]
         ]
