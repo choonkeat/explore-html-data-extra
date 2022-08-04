@@ -16,8 +16,8 @@ import HtmlData.Extra
 3.  as plain text String
 
 -}
-demo : (Int -> HtmlData.Html msg) -> Int -> Html msg
-demo originalView model =
+demo : HtmlData.Html msg -> (Int -> HtmlData.Html msg) -> Int -> Html msg
+demo lazyElement originalView model =
     let
         renderedNode =
             originalView model
@@ -46,15 +46,6 @@ demo originalView model =
                 background-color: #dddddd;
                 padding: 1em;
                 word-break: break-word;
-            }
-            li {
-                transition: background-color 2s ease;
-            }
-            li.current {
-                background-color: yellow;
-            }
-            li.past {
-                background-color: white;
             }
             """
             ]
@@ -122,5 +113,9 @@ demo originalView model =
                     ]
                 ]
             ]
-        , a [ href "https://github.com/choonkeat/explore-html-data-extra" ] [ text "github.com/choonkeat/explore-html-data-extra" ]
+        , h2 [] [ text "HtmlData.Lazy" ]
+        , div [] [ HtmlData.Extra.toElmHtml lazyElement ]
+        , p []
+            [ a [ href "https://github.com/choonkeat/explore-html-data-extra" ] [ text "github.com/choonkeat/explore-html-data-extra" ]
+            ]
         ]

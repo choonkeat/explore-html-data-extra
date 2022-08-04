@@ -1,11 +1,11 @@
-module HtmlData.Attributes exposing (Attribute(..), EventListener(..), accept, acceptCharset, accesskey, action, align, alt, attribute, autocomplete, autofocus, autoplay, checked, cite, class, classList, cols, colspan, contenteditable, contextmenu, controls, coords, datetime, default, dir, disabled, download, draggable, dropzone, enctype, for, form, headers, height, hidden, href, hreflang, id, ismap, itemprop, kind, lang, list, loop, manifest, map, max, maxlength, media, method, min, minlength, multiple, name, novalidate, pattern, ping, placeholder, poster, preload, pubdate, readonly, rel, required, reversed, rows, rowspan, sandbox, scope, selected, shape, size, spellcheck, src, srcdoc, srclang, start, step, style, tabindex, target, title, type_, usemap, value, width, wrap)
+module HtmlData.Attributes exposing (Attribute(..), EventListener(..), accept, acceptCharset, accesskey, action, align, alt, property, attribute, autocomplete, autofocus, autoplay, checked, cite, class, classList, cols, colspan, contenteditable, contextmenu, controls, coords, datetime, default, dir, disabled, download, draggable, dropzone, enctype, for, form, headers, height, hidden, href, hreflang, id, ismap, itemprop, kind, lang, list, loop, manifest, map, max, maxlength, media, method, min, minlength, multiple, name, novalidate, pattern, ping, placeholder, poster, preload, pubdate, readonly, rel, required, reversed, rows, rowspan, sandbox, scope, selected, shape, size, spellcheck, src, srcdoc, srclang, start, step, style, tabindex, target, title, type_, usemap, value, width, wrap)
 
 {-| See documentation of [Html.Attributes](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes)
 
 Except, the types here are intentionally fully exposed.
 The helper functions exists merely to make writing them feel like elm/html et al
 
-@docs Attribute, EventListener, accept, acceptCharset, accesskey, action, align, alt, attribute, autocomplete, autofocus, autoplay, checked, cite, class, classList, cols, colspan, contenteditable, contextmenu, controls, coords, datetime, default, dir, disabled, download, draggable, dropzone, enctype, for, form, headers, height, hidden, href, hreflang, id, ismap, itemprop, kind, lang, list, loop, manifest, map, max, maxlength, media, method, min, minlength, multiple, name, novalidate, pattern, ping, placeholder, poster, preload, pubdate, readonly, rel, required, reversed, rows, rowspan, sandbox, scope, selected, shape, size, spellcheck, src, srcdoc, srclang, start, step, style, tabindex, target, title, type_, usemap, value, width, wrap
+@docs Attribute, EventListener, accept, acceptCharset, accesskey, action, align, alt, property, attribute, autocomplete, autofocus, autoplay, checked, cite, class, classList, cols, colspan, contenteditable, contextmenu, controls, coords, datetime, default, dir, disabled, download, draggable, dropzone, enctype, for, form, headers, height, hidden, href, hreflang, id, ismap, itemprop, kind, lang, list, loop, manifest, map, max, maxlength, media, method, min, minlength, multiple, name, novalidate, pattern, ping, placeholder, poster, preload, pubdate, readonly, rel, required, reversed, rows, rowspan, sandbox, scope, selected, shape, size, spellcheck, src, srcdoc, srclang, start, step, style, tabindex, target, title, type_, usemap, value, width, wrap
 
 -}
 
@@ -17,6 +17,7 @@ type Attribute msg
     = Attribute String String
     | NoAttribute
     | EventListener (EventListener msg)
+    | Property String Json.Decode.Value
 
 
 {-| Stores declarations for [Html.Events](https://package.elm-lang.org/packages/elm/html/latest/Html-Events)
@@ -40,6 +41,12 @@ style k v =
 attribute : String -> String -> Attribute msg
 attribute =
     Attribute
+
+
+{-| -}
+property : String -> Json.Decode.Value -> Attribute msg
+property =
+    Property
 
 
 {-| -}
@@ -70,6 +77,9 @@ map f attr =
 
         EventListener l ->
             EventListener (mapEventListener f l)
+
+        Property k v ->
+            Property k v
 
 
 mapEventListener : (a -> b) -> EventListener a -> EventListener b

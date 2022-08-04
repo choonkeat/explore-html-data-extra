@@ -9,6 +9,7 @@ The helper functions exists merely to make writing them feel like elm/html et al
 
 -}
 
+import Html
 import HtmlData.Attributes exposing (Attribute, href)
 
 
@@ -17,6 +18,7 @@ type Html msg
     = Text String
     | Element String (List (Attribute msg)) (List (Html msg))
     | KeyedElement String (List (Attribute msg)) (List ( String, Html msg ))
+    | LazyElement (() -> Html msg) (() -> Html.Html msg)
 
 
 {-| -}
@@ -43,6 +45,9 @@ map f htmlnode =
 
         KeyedElement string attrs children ->
             KeyedElement string (List.map (HtmlData.Attributes.map f) attrs) (List.map (Tuple.mapSecond (map f)) children)
+
+        LazyElement lazyf lazyHtml ->
+            LazyElement (\_ -> lazyf () |> map f) (\_ -> Html.map f (lazyHtml ()))
 
 
 {-| -}
