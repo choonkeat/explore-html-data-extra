@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Homepage
+import Html.Parser
 import HtmlData exposing (..)
 import HtmlData.Attributes exposing (..)
 import HtmlData.Events exposing (..)
@@ -11,10 +12,10 @@ import HtmlData.Lazy
 import Json.Encode
 
 
-main : Program () Int Msg
+main : Program () Model Msg
 main =
     Browser.sandbox
-        { init = 4
+        { init = Model 4 "<em>Hello</em>, world!"
         , update = update
         , view =
             Homepage.demo
@@ -26,26 +27,36 @@ main =
         }
 
 
+type alias Model =
+    { number : Int
+    , text : String
+    }
+
+
 type Msg
     = Increment
     | Decrement
+    | OnTextarea String
 
 
-update : Msg -> number -> number
+update : Msg -> Model -> Model
 update msg model =
     case msg of
         Increment ->
-            model + 1
+            { model | number = model.number + 1 }
 
         Decrement ->
-            model - 1
+            { model | number = model.number - 1 }
+
+        OnTextarea str ->
+            { model | text = str }
 
 
-view : Int -> Html Msg
+view : Model -> Html Msg
 view model =
     let
         sortedStrings =
-            List.range 0 model
+            List.range 0 model.number
                 -- so 0 to 0 is an empty list
                 |> List.drop 1
                 -- so we have opportunities to insert stuff between stuff
@@ -53,8 +64,16 @@ view model =
                 |> List.sort
     in
     div [ name "hello\">" ]
-        [ p []
-            [ b [] [ text "Manually empty the values of each input below" ]
+        [ p [] [ b [] [ text "1. Try entering html into the textarea below" ] ]
+        , textarea [ onInput OnTextarea ] [ text model.text ]
+        , case Html.Parser.run model.text of
+            Err err ->
+                pre [] [ text (Debug.toString err) ]
+
+            Ok nodes ->
+                div [] (HtmlData.Extra.fromHtmlParserNodes nodes)
+        , p [ style "margin-top" "2em" ]
+            [ b [] [ text "2. Manually empty the values of each input below" ]
             , text ", then click "
             , code [] [ text "+" ]
             , text " button to get count >= 10 and see what "
@@ -63,7 +82,7 @@ view model =
             ]
         , div []
             [ button [ onClick Decrement ] [ text "-" ]
-            , div [] [ text ("Count = " ++ String.fromInt model) ]
+            , div [] [ text ("Count = " ++ String.fromInt model.number) ]
             , button [ onClick Increment ] [ text "+" ]
             ]
         , p []
@@ -131,7 +150,7 @@ sieve limit =
             numbers
 
 
-viewPrime : Int -> Html Msg
+viewPrime : Int -> Html msg
 viewPrime limit =
     text
         ("There are "

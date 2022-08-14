@@ -1,5 +1,6 @@
 module HtmlData.Extra exposing
     ( toTextHtml, toTextPlain, toElmHtml
+    , fromHtmlParserNodes
     , SanitizeConfig, defaultSanitizeConfig, TextPlainConfig, defaultTextPlainConfig
     , escapeHtml, sanitize
     )
@@ -12,6 +13,10 @@ module HtmlData.Extra exposing
 to convert `HtmlData.Html` values into `String`
 
 @docs toTextHtml, toTextPlain, toElmHtml
+
+to convert from [Html.Parser.Node](https://package.elm-lang.org/packages/hecrj/html-parser/latest/Html-Parser#Node)
+
+@docs fromHtmlParserNodes
 
 
 ## Configs
@@ -801,3 +806,42 @@ listenerToElmHtml l =
 
         Custom s d ->
             Html.Events.custom s d
+
+
+
+--
+
+
+{-| We could parse a `String` with [`Html.Parser.run`](https://package.elm-lang.org/packages/hecrj/html-parser/latest/) and
+convert them into `HtmlData.Html`
+
+    import Html.Parser
+    import HtmlData exposing (..)
+    import HtmlData.Attributes exposing (..)
+
+    Html.Parser.run "<div class=\"hello world\"><b>young</b> and <em>dangerous</em></div>"
+    |> Result.map fromHtmlParserNodes
+    --> Ok [Element "div" [Attribute "class" "hello world"] [Element "b" [] [Text "young"],Text " and ",Element "em" [] [Text "dangerous"]]]
+
+-}
+fromHtmlParserNodes : List Html.Parser.Node -> List (Html msg)
+fromHtmlParserNodes nodes =
+    List.map fromHtmlParserNodes_helper nodes
+
+
+fromHtmlParserNodes_helper : Html.Parser.Node -> Html msg
+fromHtmlParserNodes_helper node =
+    case node of
+        Html.Parser.Element name attrs children ->
+            Element name (List.map fromHtmlParserAttr attrs) (List.map fromHtmlParserNodes_helper children)
+
+        Html.Parser.Text s ->
+            text s
+
+        Html.Parser.Comment _ ->
+            text ""
+
+
+fromHtmlParserAttr : ( String, String ) -> Attribute msg
+fromHtmlParserAttr ( k, v ) =
+    Attribute k v

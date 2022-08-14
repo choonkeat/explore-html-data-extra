@@ -16,7 +16,7 @@ import HtmlData.Extra
 3.  as plain text String
 
 -}
-demo : HtmlData.Html msg -> (Int -> HtmlData.Html msg) -> Int -> Html msg
+demo : HtmlData.Html msg -> (model -> HtmlData.Html msg) -> model -> Html msg
 demo lazyElement originalView model =
     let
         renderedNode =
@@ -24,7 +24,7 @@ demo lazyElement originalView model =
 
         layout =
             div
-                [ style "max-width" "500px"
+                [ style "max-width" "1000px"
                 , style "margin" "0 auto 0 auto"
                 , style "padding" "0.5em 0.5em"
                 ]
@@ -47,6 +47,16 @@ demo lazyElement originalView model =
                 padding: 1em;
                 word-break: break-word;
             }
+
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .container > li {
+                max-width: 300px;
+                list-style: none;
+                padding-right: 1em;
+            }
             """
             ]
         , div []
@@ -63,7 +73,8 @@ demo lazyElement originalView model =
                 [ code [] [ text "HtmlData.Html msg" ]
                 ]
             ]
-        , ol []
+        , ol
+            [ class "container" ]
             [ li [ style "margin-top" "2em" ]
                 [ a
                     [ href "https://package.elm-lang.org/packages/choonkeat/html-data-extra/latest/HtmlData-Extra#toElmHtml"
