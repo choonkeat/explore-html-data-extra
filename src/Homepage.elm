@@ -106,7 +106,7 @@ demo lazyElement originalView model =
                 , text " html value; useful for server side rendering."
                 , pre []
                     [ text
-                        (HtmlData.Extra.toTextHtml HtmlData.Extra.defaultSanitizeConfig renderedNode)
+                        (HtmlData.Extra.toTextHtml renderedNode)
                     ]
                 ]
             , li [ style "margin-top" "2em" ]
